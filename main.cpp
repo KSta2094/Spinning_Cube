@@ -8,7 +8,7 @@
 #include <vector>
 #define WIDTH 50
 #define HEIGHT 50
-#define FRAMES 1.0 / 24.0
+#define FRAMES 1.0 / 60.0
 #define PI 3.141592653589793
 
 typedef struct {
@@ -97,7 +97,26 @@ void bufferDraw(std::vector<char> buffer) {
     }
 }
 
-void rotatexz(std::vector<std::optional<Vector3>> *vertexes, float angle) {
+void rotatex(std::vector<std::optional<Vector3>> *vertexes, float angle) {
+
+    float c_z = 3;
+    float c_y = 0;
+
+    for (int i{0}; i < (*vertexes).size(); i++) {
+
+        Vector3 tmp{0};
+
+        tmp.y = ((*vertexes)[i]->y - c_y) * cos(angle) -
+                ((*vertexes)[i]->z - c_z) * sin(angle) + c_y;
+
+        tmp.z = ((*vertexes)[i]->y - c_y) * sin(angle) +
+                ((*vertexes)[i]->z - c_z) * cos(angle) + c_z;
+        (*vertexes)[i]->y = tmp.y;
+        (*vertexes)[i]->z = tmp.z;
+    }
+}
+
+void rotatey(std::vector<std::optional<Vector3>> *vertexes, float angle) {
 
     float c_x = 0;
     float c_z = 3;
@@ -116,6 +135,7 @@ void rotatexz(std::vector<std::optional<Vector3>> *vertexes, float angle) {
         (*vertexes)[i]->z = tmp.z;
     }
 }
+
 std::vector<std::optional<Vector2>>
 plot3D(std::vector<std::optional<Vector3>> vertexes3D,
        std::vector<char> *buffer) {
@@ -161,7 +181,8 @@ int main() {
         // clear screen
         clear(&buffer);
 
-        rotatexz(&vertexes3D, 0.05);
+        rotatey(&vertexes3D, 0.02);
+        rotatex(&vertexes3D, 0.02);
         vertexes2D = plot3D(vertexes3D, &buffer);
         connectPolygon(vertexes2D, &buffer);
 
