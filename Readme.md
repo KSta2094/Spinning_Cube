@@ -1,0 +1,8 @@
+# Spinning Cube
+
+## Building and Running
+
+```  g++ main.cpp -std=c++20 -o out && ./out ```
+
+
+
