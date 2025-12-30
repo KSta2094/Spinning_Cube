@@ -49,14 +49,16 @@ void drawLine(Vector2 a, Vector2 b, std::vector<char> *display) {
     float x = a.x;
     float y = a.y;
 
-    for (int i = 1; i < steps; i++) {
+    for (int i = 0; i < steps; i++) {
         int ix = (int)std::round(x);
         int iy = (int)std::round(y);
 
-        if (ix >= 0 && ix < WIDTH && iy >= 0 && iy < HEIGHT &&
-            (*display)[iy * WIDTH + ix] != 'X')
+        if (ix >= 0 && ix < WIDTH && iy >= 0 && iy < HEIGHT) {
             (*display)[iy * WIDTH + ix] = '.';
-
+        }
+        if (i == 0 || i == steps) {
+            (*display)[iy * WIDTH + ix] = 'X';
+        }
         x += xInc;
         y += yInc;
     }
@@ -70,10 +72,14 @@ std::optional<Vector2> drawPoint(Vector3 p, std::vector<char> *buffer) {
     Vector2 screen;
     screen.x = static_cast<int>(((new_p->x + 1) / 2.0) * WIDTH - 1);
     screen.y = static_cast<int>((1 - ((new_p->y + 1) / 2.0)) * HEIGHT);
-    if (screen.x > WIDTH) {
+    if (screen.x > WIDTH && screen.x < 0) {
         return std::nullopt;
     };
-    (*buffer)[screen.y * WIDTH + screen.x] = 'X';
+
+    if (screen.y > HEIGHT && screen.y < 0) {
+        return std::nullopt;
+    };
+    //(*buffer)[screen.y * WIDTH + screen.x] = 'X';
     return screen;
 }
 
