@@ -8,7 +8,7 @@
 #include <optional>
 #include <type_traits>
 #include <vector>
-#define WIDTH 50
+#define WIDTH 100
 #define HEIGHT 50
 #define FRAMES 1.0 / 30.0
 #define PI 3.141592653589793
@@ -138,6 +138,11 @@ void connectPolygon(std::vector<Triangle2D> trigs, std::vector<char> *buffer) {
 void clear(std::vector<char> *buffer) {
 
     std::fill((*buffer).begin(), buffer->end(), ' ');
+    // floor
+    for (int i = (*buffer).size() / 2; i < (*buffer).size(); i++) {
+        (*buffer)[i] = '#';
+    };
+
     printf("\033[H\033[J");
 }
 
@@ -283,6 +288,22 @@ int main() {
 
     };
 
+    std::vector<Triangle3D> cube1 = {
+        // front face
+        Triangle3D{Vector3{3, 1, 2}, Vector3{5, 1, 2}, Vector3{3, -1, 2}},
+        Triangle3D{Vector3{5, -1, 2}, Vector3{5, 1, 2}, Vector3{3, -1, 2}},
+        // back face
+        Triangle3D{Vector3{3, 1, 4}, Vector3{5, 1, 4}, Vector3{3, -1, 4}},
+        Triangle3D{Vector3{5, -1, 4}, Vector3{5, 1, 4}, Vector3{3, -1, 4}},
+
+        // left face
+        Triangle3D{Vector3{3, 1, 2}, Vector3{3, 1, 4}, Vector3{3, -1, 2}},
+        Triangle3D{Vector3{3, -1, 4}, Vector3{3, 1, 4}, Vector3{3, -1, 2}},
+
+        // right face
+        Triangle3D{Vector3{5, 1, 2}, Vector3{5, 1, 4}, Vector3{5, -1, 2}},
+        Triangle3D{Vector3{5, -1, 4}, Vector3{5, 1, 4}, Vector3{5, -1, 2}},
+    };
     Vector3 input(0, 0, 0);
 
     while (running) {
@@ -296,12 +317,13 @@ int main() {
         // clear screen
         //
         clear(&buffer);
-        move_vertexes(&cube, input);
-        // vertexes2D = plot3D(vertexes3D, &buffer);
-        //
-        projectedTrignales = project_cube(cube);
 
-        rastorize_shape(projectedTrignales, &buffer);
+        move_vertexes(&cube, input);
+        rastorize_shape(project_cube(cube), &buffer);
+
+        move_vertexes(&cube1, input);
+        rastorize_shape(project_cube(cube1), &buffer);
+
         bufferDraw(buffer);
 
         last_time = now;
